@@ -1,0 +1,52 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "extends" : [
+      "./node_modules/react-redux-typescript-scripts/eslint.js",
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:react/recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/recommended-requiring-type-checking",
+      "plugin:react-hooks/recommended",
+      "plugin:jsx-a11y/recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings",
+      "plugin:import/typescript"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "impliedStrict": true,
+        "jsx": true
+      },
+      "project": "./tsconfig.eslint.json"
+    },
+    "rules": {
+      "react/prop-types": 0,
+      "linebreak-style": ["error", "windows"],
+      "max-len": [2, 125, 4, { "ignoreUrls" : true }]
+    },
+    "settings":  {
+      "react":  {
+        "version":  "detect"
+      },
+      "import/parsers": {
+        "@typescript-eslint/parser": [ ".ts", ".tsx" ]
+      },
+      "import/resolver": {
+        "node": {},
+        "typescript": {}
+      },
+      "typescript": {
+        "alwaysTryTypes": true, 
+        "directory": "./tsconfig.json"
+      }
+    },
+    "env": {
+      "es2020": true,
+      "browser": true,
+      "node": true
+    }
+  }
