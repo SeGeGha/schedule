@@ -6,11 +6,10 @@
   "scripts": {
     "start": "webpack-dev-server --env development",
     "build": "webpack --env production",
-    "eslint": "npx eslint ./src/**.*js --fix",
+    "eslint": "npx eslint ./src/**.*tsx --fix",
     "stylelint": "npx stylelint ./src/*.scss",
     "stylefix": "npx stylelint --fix *.scss",
-    "precommit": "lint-staged",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "precommit": "lint-staged"
   },
   "repository": {
     "type": "git",
@@ -38,6 +37,7 @@
     "babel-plugin-styled-components": "^1.11.1",
     "core-js": "^3.6.5",
     "css-loader": "^4.2.2",
+    "editorconfig": "^0.15.3",
     "eslint": "^7.8.1",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-airbnb-typescript": "^9.0.0",
@@ -89,7 +89,7 @@
     }
   },
   "lint-staged": {
-    "src/*.{js,jsx,ts}": "eslint --cache --fix",
+    "src/*.{js,jsx,ts, tsx}": "eslint --cache --fix",
     "src/*.scss": "stylelint --syntax=scss"
   }
 }
