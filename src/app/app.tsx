@@ -1,10 +1,10 @@
 import React from 'react';
-import { Button } from 'antd';
+
+import Switcher from '../components/Switcher/Switcher';
 
 const App: React.FC = () => (
   <>
-    <Button type="primary">PRESS ME</Button>
-    Test
+    <Switcher />
   </>
 );
 
