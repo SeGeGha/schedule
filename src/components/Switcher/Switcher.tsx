@@ -13,7 +13,7 @@ const Switcher: React.FC = () => (
       unCheckedChildren={<CloseOutlined />}
       onChange={() => console.log('change')}
     />
-    Режим Ментора
+    Mentor mode
   </div>
 );
 

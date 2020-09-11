@@ -1,0 +1,14 @@
+@import '../../styles/mixin.scss';
+
+header {
+  nav {
+    padding: 8px;
+
+    @include flex(row, space-between, center);
+
+    img {
+      height: 30px;
+      cursor: pointer;
+    }
+  }
+}
