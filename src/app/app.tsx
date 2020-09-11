@@ -1,10 +1,12 @@
 import React from 'react';
 
-import Switcher from '../components/Switcher/Switcher';
+import Header from '../components/Header/Header';
+import Main from '../components/Main/Main';
 
 const App: React.FC = () => (
   <>
-    <Switcher />
+    <Header />
+    <Main />
   </>
 );
 
