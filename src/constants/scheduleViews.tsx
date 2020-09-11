@@ -3,21 +3,23 @@ import {
   TableOutlined, ScheduleOutlined, ProfileOutlined,
 } from '@ant-design/icons';
 
+import { TABLE_VIEW, CALENDAR_VIEW, LIST_VIEW } from './settings';
+
 const tableIcon = <TableOutlined />;
 const calendarIcon = <ScheduleOutlined />;
 const listIcon = <ProfileOutlined />;
 
 export default [
   {
-    name: 'Table View',
+    name: TABLE_VIEW,
     icon: tableIcon,
   },
   {
-    name: 'Calendar View',
+    name: CALENDAR_VIEW,
     icon: calendarIcon,
   },
   {
-    name: 'List View',
+    name: LIST_VIEW,
     icon: listIcon,
   },
 ];

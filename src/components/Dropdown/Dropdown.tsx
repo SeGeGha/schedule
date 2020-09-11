@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Dropdown, Button, Menu } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 
 import scheduleViews from '../../constants/scheduleViews';
+import { useScheduleContext } from '../Schedule/ScheduleContext';
 
 import './Dropdown.scss';
 
-const DropDownMenu = (
+const DropDownMenu = (clickHandler: (id: string) => void) => (
   <Menu onClick={() => {}}>
     {scheduleViews.map(({ name, icon }) => (
-      <Menu.Item key={name} icon={icon}>
+      <Menu.Item key={name} icon={icon} onClick={({ key }) => clickHandler(key as string)}>
         {name}
       </Menu.Item>
     ))}
@@ -18,10 +19,10 @@ const DropDownMenu = (
 );
 
 const DropDown: React.FC = () => {
-  const [view] = useState(scheduleViews[0].name);
+  const { view, changeView } = useScheduleContext();
 
   return (
-    <Dropdown overlay={DropDownMenu} placement="bottomLeft">
+    <Dropdown overlay={DropDownMenu(changeView)} placement="bottomLeft">
       <Button>
         {view}
         {' '}
