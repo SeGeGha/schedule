@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 
-import { Dropdown, Menu } from 'antd';
+import { Dropdown, Button, Menu } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 
 import scheduleViews from '../../constants/scheduleViews';
+
+import './Dropdown.scss';
 
 const DropDownMenu = (
   <Menu onClick={() => {}}>
@@ -19,13 +21,13 @@ const DropDown: React.FC = () => {
   const [view] = useState(scheduleViews[0].name);
 
   return (
-    <Dropdown.Button
-      onClick={() => {}}
-      overlay={DropDownMenu}
-      icon={<DownOutlined />}
-    >
-      {view}
-    </Dropdown.Button>
+    <Dropdown overlay={DropDownMenu} placement="bottomLeft">
+      <Button>
+        {view}
+        {' '}
+        <DownOutlined />
+      </Button>
+    </Dropdown>
   );
 };
 

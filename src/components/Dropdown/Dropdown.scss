@@ -1,0 +1,7 @@
+@import '../../styles/mixin.scss';
+
+.ant-dropdown-trigger.ant-btn {
+  min-width: 140px;
+
+  @include flex(row, space-between, center);
+}
