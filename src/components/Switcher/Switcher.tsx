@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Switch } from 'antd';
-import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+// import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 import { useScheduleContext } from '../Schedule/ScheduleContext';
 import { MENTOR_MODE, STUDENT_MODE } from '../../constants/settings';
@@ -17,16 +17,17 @@ const Switcher: React.FC = () => {
 
     toggleMode(newMode);
   };
+  const mentor = 'mentor';
+  const student = 'student';
 
   return (
     <div className="switcher">
       <Switch
-        checkedChildren={<CheckOutlined />}
-        unCheckedChildren={<CloseOutlined />}
+        checkedChildren={mentor}
+        unCheckedChildren={student}
         onChange={onChange}
         checked={isChecked}
       />
-      Mentor mode
     </div>
   );
 };
