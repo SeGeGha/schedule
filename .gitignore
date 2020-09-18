@@ -23,5 +23,5 @@ yarn-error.log*
 dist
 debug.log
 .eslintcache
-
+.gitattributes
 package-lock.json

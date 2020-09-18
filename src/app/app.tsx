@@ -1,11 +1,14 @@
 import React from 'react';
-import { Button } from 'antd';
+
+import Header from '../components/Header/Header';
+import Main from '../components/Main/Main';
+import { ScheduleProvider } from '../components/Schedule/ScheduleContext';
 
 const App: React.FC = () => (
-  <>
-    <Button type="primary">PRESS ME</Button>
-    Test
-  </>
+  <ScheduleProvider>
+    <Header />
+    <Main />
+  </ScheduleProvider>
 );
 
 export default App;

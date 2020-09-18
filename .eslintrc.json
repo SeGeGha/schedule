@@ -33,7 +33,8 @@
     "no-plusplus": "off",
     "no-alert": "error",
     "max-len": [2, 125, 4, { "ignoreUrls": true }],
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "import/no-cycle": "off"
   },
   "settings":  {
     "react":  {
