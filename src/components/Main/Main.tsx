@@ -1,6 +1,5 @@
 import React from 'react';
 
-// import DropDown from '../Dropdown/Dropdown';
 import { useScheduleContext } from '../Schedule/ScheduleContext';
 
 import './Main.scss';

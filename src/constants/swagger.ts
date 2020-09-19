@@ -4,6 +4,6 @@ export const methods = {
   get: 'GET',
   post: 'POST',
   put: 'PUT',
-  del: 'DELETE'
+  del: 'DELETE',
 };
 export const jsonType = 'application/json';
