@@ -13,7 +13,7 @@ const Main: React.FC = () => {
   let currentView;
   switch (view) {
     case TABLE_VIEW:
-      currentView = <TableSchedule />;
+      currentView = <TableSchedule isMentor={isMentor} />;
       break;
     case LIST_VIEW:
       currentView = <ListSchedule />;
