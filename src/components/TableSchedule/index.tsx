@@ -7,12 +7,15 @@ import { connect } from 'react-redux';
 import { Table, Tag } from 'antd';
 import dataSource from '../../mock';
 import { ObjData } from '../../models';
+import MainMenu from '../MainMenu';
 
 const columns = [
   {
     title: 'Date & Time',
     dataIndex: 'dateTime',
     key: 'dateTime',
+    fixed: 'left',
+    // width: 130,
     // defaultSortOrder: 'descend',
     // sorter: (a: string, b: string) => (a > b ? 1 : -1),
   },
@@ -78,12 +81,19 @@ const TableSchedule: React.FC = (props: any) => {
     <div>
       Table
       {selectedRowKeys.toString()}
+      <MainMenu rows={selectedRowKeys} />
       <Table
+        bordered
+        pagination={{ pageSize: 20 }}
         loading={load}
         size="small"
         dataSource={dataSource}
         columns={columns as any}
         rowSelection={{
+          selections: [
+            Table.SELECTION_ALL,
+            Table.SELECTION_INVERT,
+          ],
           onChange: (a1, a2) => {
             changeSel(a1 as string[]);
             window.console.log('onChange: list keys=', a1, 'list objects=', a2);

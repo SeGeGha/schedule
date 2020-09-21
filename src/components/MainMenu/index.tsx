@@ -8,14 +8,22 @@ import { connect } from 'react-redux';
 import { CloseOutlined, MenuOutlined, SyncOutlined } from '@ant-design/icons';
 import { Button, Space } from 'antd';
 import { getAllDataAsync } from '../../store/dataReducer';
+import { useConfigContext } from '../ConfigContext';
 
-const MainMenu: React.FC = (props: any) => {
+interface MyProps {
+  load: boolean;
+  getDataBase: any;
+  rows: string[];
+}
+
+const MainMenu: React.FC<MyProps> = (props: MyProps) => {
   const {
     load,
     getDataBase,
+    rows,
   } = props;
+  const { isMentor } = useConfigContext();
   const [isMenu, toggleMenu] = useState(false);
-  const aa = 0;
   return (
     <Space>
       <Button
@@ -29,20 +37,22 @@ const MainMenu: React.FC = (props: any) => {
             onClick={() => getDataBase()}
             loading={load}
           />
-          <Button>
-            Add
-          </Button>
-          <Button>
-            Edit
-          </Button>
-          <Button>
-            Delede
-          </Button>
-          <Button>
+          <Button disabled={!rows.length}>
             Hide
           </Button>
-          menu
-          {aa}
+          {isMentor && (
+          <>
+            <Button>
+              Add
+            </Button>
+            <Button disabled={rows.length !== 1}>
+              Edit
+            </Button>
+            <Button disabled={rows.length !== 1}>
+              Delete
+            </Button>
+          </>
+          )}
         </Space>
       )}
     </Space>
@@ -57,4 +67,3 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainMenu);
-// export default connect(null, mapDispatchToProps)(MainMenu);

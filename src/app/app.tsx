@@ -3,16 +3,16 @@ import { Provider } from 'react-redux';
 import store from '../store';
 import Header from '../components/Header/Header';
 import Main from '../components/Main/Main';
-import { ScheduleProvider } from '../components/Schedule/ScheduleContext';
+import { ConfigProvider } from '../components/ConfigContext';
 import { getAllDataAsync } from '../store/dataReducer';
 
 const App: React.FC = () => (
-  <ScheduleProvider>
+  <ConfigProvider>
     <Header />
     <Provider store={store}>
       <Main />
     </Provider>
-  </ScheduleProvider>
+  </ConfigProvider>
 );
 
 export default App;

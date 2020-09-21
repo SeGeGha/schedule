@@ -1,17 +1,15 @@
 import React from 'react';
 
-import { LIST_VIEW, MENTOR_MODE, TABLE_VIEW } from '../../constants/settings';
-import { useScheduleContext } from '../Schedule/ScheduleContext';
+import { LIST_VIEW, TABLE_VIEW } from '../../constants/settings';
+import { useConfigContext } from '../ConfigContext';
 
 import './Main.scss';
 import TableSchedule from '../TableSchedule';
 import ListSchedule from '../ListSchedule';
 import CalendarSchedule from '../CalendarSchedule';
-import MainMenu from '../MainMenu';
 
 const Main: React.FC = () => {
-  const { view, mode } = useScheduleContext();
-  const isMentor = mode === MENTOR_MODE;
+  const { view, isMentor } = useConfigContext();
   let currentView;
   switch (view) {
     case TABLE_VIEW:
@@ -26,14 +24,12 @@ const Main: React.FC = () => {
 
   return (
     <main>
-      <MainMenu />
-      <div>
-        {currentView}
-      </div>
       <div>
         mode=
-        {mode}
-        {isMentor}
+        {isMentor ? 'mentor' : 'student'}
+      </div>
+      <div>
+        {currentView}
       </div>
     </main>
   );

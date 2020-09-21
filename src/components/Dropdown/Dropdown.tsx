@@ -4,7 +4,7 @@ import { Dropdown, Button, Menu } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 
 import scheduleViews from '../../constants/scheduleViews';
-import { useScheduleContext } from '../Schedule/ScheduleContext';
+import { useConfigContext } from '../ConfigContext/index';
 
 import './Dropdown.scss';
 
@@ -19,7 +19,7 @@ const DropDownMenu = (clickHandler: (id: string) => void) => (
 );
 
 const DropDown: React.FC = () => {
-  const { view, changeView } = useScheduleContext();
+  const { view, changeView } = useConfigContext();
 
   return (
     <Dropdown overlay={DropDownMenu(changeView)} placement="bottomLeft">
