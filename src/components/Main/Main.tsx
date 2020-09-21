@@ -7,6 +7,7 @@ import './Main.scss';
 import TableSchedule from '../TableSchedule';
 import ListSchedule from '../ListSchedule';
 import CalendarSchedule from '../CalendarSchedule';
+import MainMenu from '../MainMenu';
 
 const Main: React.FC = () => {
   const { view, mode } = useScheduleContext();
@@ -25,6 +26,7 @@ const Main: React.FC = () => {
 
   return (
     <main>
+      <MainMenu />
       <div>
         {currentView}
       </div>
