@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { createSlice, Dispatch } from '@reduxjs/toolkit';
+import { createFilterTypes, createUniqTypesObj } from '../utils';
+// import { createUniqTypesObj } from '../utils';
 import fetchSwagger from '../api/fetchSwagger';
 import { ObjData, ObjState } from '../models';
 
@@ -9,10 +11,14 @@ const dataSlice = createSlice({
   name: 'req',
   initialState: {
     dataBase: [],
+    uniqTypesObj: [],
+    filterTypes: [],
     loading: false,
     errorReq: false,
   } as ObjState,
   reducers: {
+    uniqTypesAction: (state) => ({ ...state, uniqTypesObj: createUniqTypesObj(state.dataBase) }),
+    filterTypesAction: (state) => ({ ...state, filterTypes: createFilterTypes(state.uniqTypesObj) }),
     getAllData: (state, { payload }) => ({ ...state, dataBase: payload }),
     addOneData: (state, { payload }) => ({ ...state, dataBase: [...state.dataBase, payload] }),
     changeOneData: (state, { payload }) => {
@@ -47,6 +53,8 @@ const {
   addOneData,
   changeOneData,
   delOneData,
+  uniqTypesAction,
+  filterTypesAction,
 } = dataSlice.actions;
 
 function errors(dispatch: Dispatch) {
@@ -69,6 +77,8 @@ export const getAllDataAsync = () => ((dispatch: Dispatch): void => {
     .then((data) => {
       dispatch(getAllData(data));
       dispatch(stopLoad());
+      dispatch(uniqTypesAction());
+      dispatch(filterTypesAction());
     })
     .catch(() => {
       dispatch(stopLoad());

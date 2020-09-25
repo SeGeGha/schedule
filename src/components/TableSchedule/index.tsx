@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -13,22 +14,26 @@ import {
   Table,
   Tag,
 } from 'antd';
-// import dataSource from '../../mock';
-import { FormOutlined } from '@ant-design/icons';
+import { FormOutlined, FileTextOutlined } from '@ant-design/icons';
 import MainMenu from '../MainMenu';
 import store from '../../store';
 import { ObjData } from '../../models';
 import { changeOneDataAsync } from '../../store/dataReducer';
-import formDate from '../../utils/formDate';
-// import ParagraphEdit from '../ParagraphEdit';
-
-// const { Paragraph } = Typography;
+import {
+  // createFilterTypes,
+  // createUniqTypesObj,
+  formDate,
+  parsingStr,
+  // uniqStr,
+} from '../../utils';
+import DateModal from '../DateModal';
+import { defaultType } from '../../constants';
+import TypeModal from '../TypeModal';
 
 const columns1 = [
   {
     title: 'Date & Time',
     dataIndex: 'dateTime',
-    // key: 'dateTime',
     fixed: 'left',
     editable: true,
     render: (text:string, record: any) => formDate(text, record.timeZone),
@@ -36,10 +41,10 @@ const columns1 = [
   {
     title: 'Type',
     dataIndex: 'type',
-    // key: 'type',
     editable: true,
     render: (type: string) => {
-      const obj = type && JSON.parse(type);
+      // const obj = type && JSON.parse(type);
+      const obj = parsingStr(type, defaultType, null);
       return obj && (
         <Tag color={obj.color}>
           {obj.name}
@@ -49,21 +54,19 @@ const columns1 = [
     filters: [
       { text: 'codewars', value: 'codewars' },
       { text: 'js task', value: 'js task' },
-    ],
+    ] as ObjData[],
     onFilter: (value: string, record: ObjData) => (record.type.indexOf(value) >= 0),
   },
   {
     title: 'name',
     dataIndex: 'name',
     editable: true,
-    // key: 'name',
   },
   {
     title: 'Description',
     dataIndex: 'description',
     editable: true,
     ellipsis: true,
-    // key: 'description',
   },
   {
     title: 'Url',
@@ -88,12 +91,10 @@ const columns1 = [
         </div>
       );
     },
-    // key: 'description',
   },
   {
     title: 'Comment',
     dataIndex: 'comment',
-    // key: 'comment',
     render: (comment: string): string => {
       if (comment) {
         const jsonComm = JSON.parse(comment).length;
@@ -107,7 +108,47 @@ const columns1 = [
   {
     title: 'Organizer',
     dataIndex: 'organizer',
-    // key: 'organizer',
+  },
+  {
+    title: 'Action',
+    dataIndex: 'action',
+    editable: true,
+    render: (text: unknown, record: any) => {
+      const aa = 'tt';
+      const [vv, vis] = useState(false);
+      return (
+        <>
+          <Button
+            icon={<FileTextOutlined />}
+            onClick={() => {
+              window.console.log(record);
+              vis(true);
+            }}
+          >
+            Page
+          </Button>
+          <Modal
+            visible={vv}
+            bodyStyle={{ minHeight: '50vh' }}
+            width={1000}
+            okText="Save"
+            onOk={() => {
+              window.console.log('saved');
+              vis(false);
+            }}
+            onCancel={() => vis(false)}
+          >
+            modal read
+            {aa}
+            {JSON.stringify(record)}
+            {JSON.stringify(record)}
+            {JSON.stringify(record)}
+            <hr />
+            end
+          </Modal>
+        </>
+      );
+    },
   },
 ];
 
@@ -115,19 +156,27 @@ type TableProps = {
   load: boolean,
   isMentor: boolean,
   base: any,
+  filter: ObjData[],
 };
 
 const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
-  const { load, base, isMentor } = props;
+  const {
+    load,
+    base,
+    isMentor,
+    filter,
+  } = props;
   const [selectedRowKeys, changeSel] = useState([] as ObjData[]);
-  // const [isEditing, toggleEdit] = useState(false);
   const [columns, changeColumn] = useState(columns1);
-  // const [dataBase, changeBase] = useState(dataSource);
+  useEffect(() => {
+    const index = columns.findIndex((item) => item.dataIndex === 'type');
+    columns[index].filters = filter;
+  }, [filter, columns]);
+
   useEffect(() => {
     window.console.log(Date.now());
     if (isMentor) {
       const tmp = columns1.map((item) => {
-        window.console.log('yyy', item.dataIndex);
         if (item.editable) {
           switch (item.dataIndex) {
             case 'dateTime':
@@ -135,10 +184,24 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
                 ...item,
                 render: (text: string, record: any) => {
                   const currentDate = formDate(text, record.timeZone);
+                  const [isVisible, toggleModal] = useState(false);
                   return (
-                    <a href="#" onClick={() => window.console.log('date', record)}>
-                      {currentDate}
-                    </a>
+                    <>
+                      <a
+                        href="#"
+                        onClick={() => {
+                          toggleModal(true);
+                        }}
+                      >
+                        {currentDate}
+                      </a>
+                      <DateModal
+                        isVisible={isVisible}
+                        toggleModal={toggleModal}
+                        defaultData={record}
+                        accessFn={(obj: any) => store.dispatch(changeOneDataAsync({ ...record, ...obj }))}
+                      />
+                    </>
                   );
                 },
               };
@@ -146,22 +209,31 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
               return {
                 ...item,
                 render: (type: string, record: any) => {
-                  const obj = type && JSON.parse(type);
+                  const [isVisibleType, toggleModalType] = useState(false);
+                  const obj = parsingStr(type, defaultType);
                   return obj && (
-                    // <Button
-                    <Tag
-                      color={obj.color}
-                      onClick={() => window.console.log('type', record)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {obj.name}
-                    </Tag>
-                    // </Button>
+                    <>
+                      <Tag
+                        color={obj.color}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          window.console.log('type', record.type);
+                          toggleModalType(true);
+                        }}
+                      >
+                        {obj.name}
+                      </Tag>
+                      <TypeModal
+                        isVisible={isVisibleType}
+                        toggleModal={toggleModalType}
+                        defaultData={record}
+                        accessFn={(success: any) => store.dispatch(changeOneDataAsync({ ...record, ...success }))}
+                      />
+                    </>
                   );
                 },
               };
             case 'descriptionUrl':
-              window.console.log('yyyyyy');
               return {
                 ...item,
                 render: (text: string, record: any) => {
@@ -197,6 +269,46 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
                   );
                 },
               };
+            case 'action':
+              return {
+                ...item,
+                render: (text: unknown, record: any) => {
+                  const aa = 'tt';
+                  const [vv, vis] = useState(false);
+                  return (
+                    <>
+                      <Button
+                        icon={<FormOutlined />}
+                        onClick={() => {
+                          window.console.log(record);
+                          vis(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Modal
+                        visible={vv}
+                        bodyStyle={{ minHeight: '50vh' }}
+                        width={1000}
+                        okText="Save"
+                        onOk={() => {
+                          window.console.log('saved');
+                          vis(false);
+                        }}
+                        onCancel={() => vis(false)}
+                      >
+                        modal edit
+                        {aa}
+                        {JSON.stringify(record)}
+                        {JSON.stringify(record)}
+                        {JSON.stringify(record)}
+                        <hr />
+                        end
+                      </Modal>
+                    </>
+                  );
+                },
+              };
             default:
               return {
                 ...item,
@@ -221,48 +333,7 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
         }
         return item;
       });
-
-      changeColumn([...tmp, {
-        title: 'Act',
-        dataIndex: 'act',
-        render: (text: unknown, record: any) => {
-          const aa = 'tt';
-          const [vv, vis] = useState(false);
-          return (
-            <>
-              <Button
-                icon={<FormOutlined />}
-                onClick={() => {
-                  window.console.log(record);
-                  vis(true);
-                }}
-              >
-                Edit
-              </Button>
-              <Modal
-                visible={vv}
-                bodyStyle={{ minHeight: '50vh' }}
-                width={1000}
-                okText="Save"
-                onOk={() => {
-                  window.console.log('saved');
-                  vis(false);
-                }}
-                onCancel={() => vis(false)}
-              >
-                modal
-                {aa}
-                {JSON.stringify(record)}
-                {JSON.stringify(record)}
-                {JSON.stringify(record)}
-                <hr />
-                end
-              </Modal>
-            </>
-          );
-        },
-        // render: () => 'ok',
-      }] as any[]);
+      changeColumn([...tmp] as any[]);
     } else {
       changeColumn([...columns1]);
     }
@@ -283,11 +354,8 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
       <MainMenu
         rows={selectedRowKeys}
         changeSel={changeSel}
-        // base={dataBase}
-        // toEdit={changeBase}
       />
       <Table
-        // marginTop={10}
         bordered
         pagination={{ pageSize: 10 }}
         loading={load}
@@ -313,6 +381,7 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
 const mapSateToProps = (state: any) => ({
   load: state.data.loading,
   base: state.data.dataBase,
+  filter: state.data.filterTypes,
 });
 
 export default connect(mapSateToProps)(TableSchedule);

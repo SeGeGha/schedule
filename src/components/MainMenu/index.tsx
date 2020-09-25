@@ -27,6 +27,7 @@ import {
 import { useConfigContext } from '../ConfigContext';
 import store from '../../store';
 import { ObjData } from '../../models';
+import { TABLE_VIEW } from '../../constants/settings';
 
 interface MyProps {
   load: boolean;
@@ -46,7 +47,8 @@ const MainMenu: React.FC<MyProps> = (props: MyProps) => {
     // base,
     // toEdit,
   } = props;
-  const { isMentor } = useConfigContext();
+  const { isMentor, view } = useConfigContext();
+  const isTable = view === TABLE_VIEW;
   const [isMenu, toggleMenu] = useState(false);
   // const [top, setTop] = useState(10);
   return (
@@ -67,7 +69,7 @@ const MainMenu: React.FC<MyProps> = (props: MyProps) => {
               icon={<EyeInvisibleOutlined />}
               disabled={!rows.length}
             >
-              Hide
+              {isTable && 'Hide'}
             </Button>
             {isMentor && (
               <>
@@ -78,16 +80,17 @@ const MainMenu: React.FC<MyProps> = (props: MyProps) => {
                     key: String(Date.now()),
                     name: 'Mike',
                     description: 'descr hhgdfhiooiuf ffgjklgkg ffee hgfrdfghj  hgffiiuyrfhj',
-                    descriptionUrl: '["https://google.com", "https://mail.google.com"]',
-                    type: '{"name": "codewars", "color": "brown"}',
+                    descriptionUrl: '["https://google.com","https://mail.google.com"]',
+                    type: '{"name":"js task","color":"#5555ff"}',
+                    // type: 'gh',
                     dateTime: '2020-11-03 20:00',
                     timeZone: '+2',
-                    place: '{name: "Minsk", lat: 20, lon: 50}',
-                    comment: '[{"message": "Comment", "mane": "Anna"}]',
+                    place: '{"name":"Minsk","lat":20,"lon":50}',
+                    comment: '[{"message":"Comment","mane":"Anna"}]',
                     organizer: '2',
                   }))}
                 >
-                  Add
+                  {isTable && 'Add'}
                 </Button>
                 <Popconfirm
                   disabled={!rows.length}
@@ -104,7 +107,7 @@ const MainMenu: React.FC<MyProps> = (props: MyProps) => {
                     icon={<DeleteOutlined />}
                     disabled={!rows.length}
                   >
-                    Delete
+                    {isTable && 'Delete'}
                   </Button>
                 </Popconfirm>
               </>
