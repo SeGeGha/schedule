@@ -25,7 +25,7 @@ module.exports = (env = {}) => {
     ];
     if (isProd) {
       plugins.push(new MiniCssExtractPlugin({
-        filename: '[name]-[hash:8].css',
+        filename: '[name].css',
       }));
     }
     return plugins;
@@ -72,7 +72,7 @@ module.exports = (env = {}) => {
           use: [{
             loader: 'file-loader',
             options: {
-              name: '[name]-[sha1:hash:4].[ext]',
+              name: '[name].[ext]',
               outputPath: 'img',
               esModule: false,
             },
@@ -119,8 +119,9 @@ module.exports = (env = {}) => {
     plugins: getPlugins(),
 
     devServer: {
-      open: true,
+      // open: true,
       historyApiFallback: true,
+      port: 3000,
     },
     devtool: 'source-map',
   };
