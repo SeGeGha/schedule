@@ -16,7 +16,7 @@ const Main: React.FC = () => {
       currentView = <TableSchedule isMentor={isMentor} />;
       break;
     case LIST_VIEW:
-      currentView = <ListSchedule />;
+      currentView = <ListSchedule isMentor={isMentor} />;
       break;
     default:
       currentView = <CalendarSchedule />;

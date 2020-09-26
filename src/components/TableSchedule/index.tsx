@@ -174,7 +174,7 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
   }, [filter, columns]);
 
   useEffect(() => {
-    window.console.log(Date.now());
+    // window.console.log(Date.now());
     if (isMentor) {
       const tmp = columns1.map((item) => {
         if (item.editable) {
