@@ -1,0 +1,25 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+      "target": "es6",
+      "module": "esnext",
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "allowJs": true,
+      "jsx": "react",
+      "declaration": true,
+      "outDir": "dist/",
+      "isolatedModules": false,
+      "allowSyntheticDefaultImports": true,
+      "strict": true,
+      "typeRoots": ["node_modules/@types", "src/typings"],
+      "esModuleInterop": true,
+      "noEmit": true,
+      "baseUrl": "./src",
+    },
+    "include": ["./src/**/*"],
+    "exclude": [
+      "node_modules",
+      "./dist/**",
+    ]
+  }

@@ -1,0 +1,9 @@
+.switcher {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .ant-switch {
+    margin-left: 8px;
+  }
+}
