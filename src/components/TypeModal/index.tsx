@@ -39,6 +39,7 @@ const TypeModal: React.FC<DateModalProps> = (props: DateModalProps) => {
   return (
     <Modal
       visible={isVisible}
+      okText="Save"
       onOk={() => {
         accessFn({ type: JSON.stringify(state) });
         toggleModal(false);
@@ -52,13 +53,17 @@ const TypeModal: React.FC<DateModalProps> = (props: DateModalProps) => {
       </h4>
       <hr />
       <Select
+        style={{ width: 200 }}
         onChange={(val: number) => {
           const newState = listTypes[val];
           changes({ ...newState });
         }}
       >
         {listTypes.map((typeObj, index) => (
-          <Option value={index} key={`${typeObj.name}${typeObj.color}`}>
+          <Option
+            value={index}
+            key={`${Date.now()}${String(index)}`}
+          >
             <Tag color={typeObj.color}>
               {typeObj.name}
             </Tag>

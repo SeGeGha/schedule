@@ -28,6 +28,7 @@ const DateModal: React.FC<DateModalProps> = (props: DateModalProps) => {
   return (
     <Modal
       visible={isVisible}
+      okText="Save"
       onOk={() => {
         accessFn(state);
         toggleModal(false);
