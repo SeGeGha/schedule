@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react-hooks/rules-of-hooks */
@@ -9,10 +11,11 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Button,
-  Modal,
+  // Modal,
   Input,
   Table,
   Tag,
+  // Typography,
 } from 'antd';
 import { FormOutlined, FileTextOutlined } from '@ant-design/icons';
 import MainMenu from '../MainMenu';
@@ -29,6 +32,9 @@ import {
 import DateModal from '../DateModal';
 import { defaultType } from '../../constants';
 import TypeModal from '../TypeModal';
+import PageModal from '../PageModal';
+import InputField from '../InputField';
+// const { Text } = Typography;
 
 const columns1 = [
   {
@@ -114,38 +120,31 @@ const columns1 = [
     dataIndex: 'action',
     editable: true,
     render: (text: unknown, record: any) => {
-      const aa = 'tt';
-      const [vv, vis] = useState(false);
+      // const aa = 'tt';
+      // const [vv, vis] = useState(false);
+      const [isVisiblePage, togglePageModal] = useState(false);
+      const isEdit = false;
       return (
         <>
           <Button
             icon={<FileTextOutlined />}
             onClick={() => {
               window.console.log(record);
-              vis(true);
+              // vis(true);
+              togglePageModal(true);
             }}
           >
             Page
           </Button>
-          <Modal
-            visible={vv}
-            bodyStyle={{ minHeight: '50vh' }}
-            width={1000}
-            okText="Save"
-            onOk={() => {
-              window.console.log('saved');
-              vis(false);
-            }}
-            onCancel={() => vis(false)}
-          >
-            modal read
-            {aa}
-            {JSON.stringify(record)}
-            {JSON.stringify(record)}
-            {JSON.stringify(record)}
-            <hr />
-            end
-          </Modal>
+
+          <PageModal
+            isVisible={isVisiblePage}
+            isEdit={isEdit}
+            toggleModal={togglePageModal}
+            defaultData={record}
+            accessFn={() => {}}
+            // accessFn={(newRecord: any) => store.dispatch(changeOneDataAsync({ ...newRecord }))}
+          />
         </>
       );
     },
@@ -273,38 +272,30 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
               return {
                 ...item,
                 render: (text: unknown, record: any) => {
-                  const aa = 'tt';
-                  const [vv, vis] = useState(false);
+                  const [isVisiblePage, togglePageModal] = useState(false);
+                  const isEdit = true;
+                  // const aa = 'tt';
+                  // const [vv, vis] = useState(false);
                   return (
                     <>
                       <Button
                         icon={<FormOutlined />}
                         onClick={() => {
-                          window.console.log(record);
-                          vis(true);
+                          window.console.log('start edit', record.name);
+                          togglePageModal(true);
+                          // vis(true);
                         }}
                       >
                         Edit
                       </Button>
-                      <Modal
-                        visible={vv}
-                        bodyStyle={{ minHeight: '50vh' }}
-                        width={1000}
-                        okText="Save"
-                        onOk={() => {
-                          window.console.log('saved');
-                          vis(false);
-                        }}
-                        onCancel={() => vis(false)}
-                      >
-                        modal edit
-                        {aa}
-                        {JSON.stringify(record)}
-                        {JSON.stringify(record)}
-                        {JSON.stringify(record)}
-                        <hr />
-                        end
-                      </Modal>
+
+                      <PageModal
+                        isVisible={isVisiblePage}
+                        isEdit={isEdit}
+                        toggleModal={togglePageModal}
+                        defaultData={record}
+                        accessFn={(newRecord: any) => store.dispatch(changeOneDataAsync({ ...newRecord }))}
+                      />
                     </>
                   );
                 },
@@ -313,18 +304,51 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
               return {
                 ...item,
                 render: (text: string, record: any) => {
-                  const [newText, editText] = useState(text);
+                  // const [newRecord, editText] = useState(record);
+                  const [isEdit, toggleEdit] = useState(false);
+                  // const field = useRef(null);
+                  useEffect(() => {
+                    window.console.log('new record', item.dataIndex, record[item.dataIndex]);
+                  });
                   return (
                     <>
-                      <Input
+                      {
+                      !isEdit
+                        ? (
+                          <div
+                            onClick={() => {
+                              toggleEdit(true);
+                            }}
+                            style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
+                          >
+                            {record[item.dataIndex]}
+                          </div>
+                        )
+                        : (
+                          <InputField
+                            defaultValue={text}
+                            enterFn={(value: any) => {
+                              const newRecord = { ...record, [item.dataIndex]: value };
+                              store.dispatch(changeOneDataAsync(newRecord));
+                              toggleEdit(false);
+                            }}
+                          />
+                        )
+                      }
+
+                      {/* <Input
+                        ref={field}
                         size="small"
-                        value={newText}
-                        onChange={(e) => editText(e.target.value)}
+                        value={newRecord[item.dataIndex]}
+                        defaultValue={record[item.dataIndex]}
+                        onChange={(e) => editText({ ...newRecord, [item.dataIndex]: e.target.value })}
+                        onChange={(e) => editText({ ...newRecord, [item.dataIndex]: e.target.value })}
                         onPressEnter={() => {
-                          const newRecord = { ...record, [item.dataIndex]: newText };
+                          const newRecord = { ...record, [item.dataIndex]: field };
                           store.dispatch(changeOneDataAsync(newRecord));
+                          window.console.log('enter record', item.dataIndex, field.current && field.current.state.value);
                         }}
-                      />
+                      /> */}
                     </>
                   );
                 },
@@ -337,7 +361,8 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
     } else {
       changeColumn([...columns1]);
     }
-  }, [isMentor]);
+    window.console.log('effect column ');
+  }, [isMentor, base]);
   // const columns = { ...columns1 };
 
   return (

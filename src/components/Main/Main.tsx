@@ -19,7 +19,7 @@ const Main: React.FC = () => {
       currentView = <ListSchedule isMentor={isMentor} />;
       break;
     default:
-      currentView = <CalendarSchedule />;
+      currentView = <CalendarSchedule isMentor={isMentor} />;
   }
 
   return (
