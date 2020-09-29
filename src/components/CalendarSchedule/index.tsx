@@ -7,8 +7,10 @@ import { Calendar, Tag } from 'antd';
 import { connect } from 'react-redux';
 import { Moment } from 'moment';
 import { formDate, parsingStr } from '../../utils';
-import { ObjData } from '../../models';
 import { defaultType } from '../../constants';
+import store from '../../store';
+import { taskPage } from '../../store/modalReducer';
+import { ObjData } from '../../models';
 // import { Moment } from 'moment';
 
 // function onPanelChange(value, mode) {
@@ -17,11 +19,11 @@ import { defaultType } from '../../constants';
 
 type CalendarProps = {
   base: ObjData[],
-  isMentor: boolean,
+  // isMentor: boolean,
 };
 
 const CalendarSchedule: React.FC<CalendarProps> = (props: CalendarProps) => {
-  const { base, isMentor } = props;
+  const { base } = props;
   const x = 0;
   return (
     <div>
@@ -42,8 +44,8 @@ const CalendarSchedule: React.FC<CalendarProps> = (props: CalendarProps) => {
           if (listEvents.length) {
             return (
               <>
-                {listEvents.map((item, index) => {
-                  const { type } = item;
+                {listEvents.map((record, index) => {
+                  const { type } = record;
                   const typeObj = parsingStr(type, defaultType, defaultType);
                   if (typeObj) {
                     const { name, color } = typeObj;
@@ -52,15 +54,11 @@ const CalendarSchedule: React.FC<CalendarProps> = (props: CalendarProps) => {
                         href="#"
                         key={`${Date.now()}${String(index)}`}
                         onClick={() => {
-                          if (isMentor) {
-                            window.console.log('edit', item.id);
-                          } else {
-                            window.console.log('read', item.id);
-                          }
+                          store.dispatch(taskPage(record));
                         }}
                       >
                         <Tag
-                          title={item.name}
+                          title={record.name}
                           color={color}
                           style={{ fontSize: 10, padding: 2, marginBottom: 5 }}
                         >

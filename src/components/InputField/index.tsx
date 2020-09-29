@@ -7,12 +7,14 @@ import { Input } from 'antd';
 
 type InputProps = {
   defaultValue: any,
-  enterFn: any,
+  accessFn: any,
+  canEdit: boolean,
 };
 
 const InputField: React.FC<InputProps> = (props: InputProps) => {
-  const { defaultValue, enterFn } = props;
+  const { defaultValue, accessFn, canEdit } = props;
   const [val, changeVal] = useState(defaultValue);
+  const [isEdit, toggleEdit] = useState(false);
 
   useEffect(() => {
     changeVal(defaultValue);
@@ -20,21 +22,37 @@ const InputField: React.FC<InputProps> = (props: InputProps) => {
 
   return (
     <>
-      <Input
-        size="small"
-        value={val}
-        onChange={(e) => changeVal(e.target.value)}
-        onPressEnter={() => {
-          if (val !== defaultValue) {
-            enterFn(val);
-          }
-        }}
-        onBlur={() => {
-          if (val !== defaultValue) {
-            enterFn(val);
-          }
-        }}
-      />
+      {(canEdit && isEdit)
+        ? (
+          <Input
+            size="small"
+            value={val}
+            onChange={(e) => changeVal(e.target.value)}
+            onPressEnter={() => {
+              if (val !== defaultValue) {
+                accessFn(val);
+              }
+              toggleEdit(false);
+            }}
+            onBlur={() => {
+              if (val !== defaultValue) {
+                accessFn(val);
+              }
+              toggleEdit(false);
+            }}
+          />
+        )
+        : (
+          <div
+            aria-hidden="true"
+            className={canEdit ? 'field field-text' : ''}
+            onClick={() => {
+              toggleEdit(canEdit && true);
+            }}
+          >
+            {val || '-'}
+          </div>
+        )}
     </>
   );
 };

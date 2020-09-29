@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import {
   Button,
   Input,
-  Modal,
   Space,
   Table,
   Tag,
@@ -21,28 +20,35 @@ import {
   parsingStr,
 } from '../../utils';
 import { defaultType } from '../../constants';
-import DateModal from '../DateModal';
+// import DateModal from '../DateModal';
 import store from '../../store';
-import { ObjData } from '../../models';
 import { changeOneDataAsync } from '../../store/dataReducer';
-import TypeModal from '../TypeModal';
+// import TypeModal from '../TypeModal';
+import { taskPage } from '../../store/modalReducer';
+import { ObjData } from '../../models';
+import DateField from '../DateField';
+import TypeField from '../TypeField';
 
 type ListProps = {
   load: boolean,
   isMentor: boolean,
   base: ObjData[],
-  // filter: ObjData[],
+  filter: ObjData[],
 };
 
 const columns1 = [
   {
-    title: '',
+    // title: '',
     dataIndex: 'main',
+    filters: [
+      { text: 'codewars', value: 'codewars' },
+      { text: 'js task', value: 'js task' },
+    ] as ObjData[],
+    onFilter: (value: string, record: ObjData) => (record.type.indexOf(value) >= 0),
     render: (text: unknown, record: ObjData) => {
       const parseType = parsingStr(record.type, defaultType, null);
       const parseUrl = parsingStr(record.descriptionUrl, [] as string[]);
       const parseComment = parsingStr(record.comment, []);
-      const [vv, vis] = useState(false);
 
       return (
         <Space direction="vertical" size="small">
@@ -89,31 +95,12 @@ const columns1 = [
             <Button
               icon={<FileTextOutlined />}
               onClick={() => {
-                window.console.log(record);
-                vis(true);
+                store.dispatch(taskPage(record));
               }}
             >
               Page
             </Button>
-            <Modal
-              visible={vv}
-              bodyStyle={{ minHeight: '50vh' }}
-              width={1000}
-              okText="Save"
-              onOk={() => {
-                window.console.log('saved');
-                vis(false);
-              }}
-              onCancel={() => vis(false)}
-            >
-              modal read
-              {JSON.stringify(record)}
-              <hr />
-              end
-            </Modal>
-
           </div>
-
         </Space>
       );
     },
@@ -125,31 +112,19 @@ const ListSchedule: React.FC<ListProps> = (props: ListProps) => {
     load,
     base,
     isMentor,
-    // filter,
+    filter,
   } = props;
   const [selectedRowKeys, changeSel] = useState([] as ObjData[]);
   const [columns, changeColumn] = useState(columns1);
 
-  // useEffect(() => {
-  //   const index = columns.findIndex((item) => item.dataIndex === 'type');
-  //   columns[index].filters = filter;
-  // }, [filter, columns]);
-
   useEffect(() => {
-    // window.console.log(Date.now());
+    const [tmp] = columns1;
     if (isMentor) {
-      const [tmp] = columns1;
-      tmp.render = (text: unknown, record: ObjData) => {
+      const render = (text: unknown, record: ObjData) => {
         const parseType = parsingStr(record.type, defaultType);
         const parseUrl = parsingStr(record.descriptionUrl, [''], ['']);
         const parseComment = parsingStr(record.comment, []);
-        const [vv, vis] = useState(false);
 
-        const currentDate = formDate(record.dateTime, record.timeZone);
-        const [isVisibleDate, toggleDateModal] = useState(false);
-
-        const [isVisibleType, toggleModalType] = useState(false);
-        // const obj = parsingStr(type, defaultType);
         const [newName, editName] = useState(record.name);
         const [newDescr, editDescr] = useState(record.description);
 
@@ -157,41 +132,23 @@ const ListSchedule: React.FC<ListProps> = (props: ListProps) => {
           <Space direction="vertical" size="small">
             <div>
               Date &amp; Time:
-              <a
-                href="#"
-                onClick={() => {
-                  toggleDateModal(true);
+              <DateField
+                record={record}
+                accessFn={(newRecord: ObjData) => {
+                  store.dispatch(changeOneDataAsync(newRecord));
                 }}
-              >
-                {currentDate}
-              </a>
-              <DateModal
-                isVisible={isVisibleDate}
-                toggleModal={toggleDateModal}
-                defaultData={record}
-                accessFn={(obj: any) => store.dispatch(changeOneDataAsync({ ...record, ...obj }))}
               />
             </div>
             <div>
               Type:
               {parseType && (
-              <Tag
-                color={parseType.color}
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  window.console.log('type', record.type);
-                  toggleModalType(true);
-                }}
-              >
-                {parseType.name}
-              </Tag>
+                <TypeField
+                  record={record}
+                  accessFn={(newRecord: ObjData) => {
+                    store.dispatch(changeOneDataAsync(newRecord));
+                  }}
+                />
               )}
-              <TypeModal
-                isVisible={isVisibleType}
-                toggleModal={toggleModalType}
-                defaultData={record}
-                accessFn={(success: any) => store.dispatch(changeOneDataAsync({ ...record, ...success }))}
-              />
             </div>
             <div>
               Name:
@@ -224,6 +181,7 @@ const ListSchedule: React.FC<ListProps> = (props: ListProps) => {
                 const [newUrl, editUrl] = useState(itemUrl);
                 return (
                   <Input
+                    key={itemUrl}
                     size="small"
                     value={newUrl}
                     onChange={(e) => editUrl(e.target.value)}
@@ -249,40 +207,21 @@ const ListSchedule: React.FC<ListProps> = (props: ListProps) => {
               <Button
                 icon={<FileTextOutlined />}
                 onClick={() => {
-                  window.console.log(record);
-                  vis(true);
+                  store.dispatch(taskPage(record));
                 }}
               >
                 Page
               </Button>
-              <Modal
-                visible={vv}
-                bodyStyle={{ minHeight: '50vh' }}
-                width={1000}
-                okText="Save"
-                onOk={() => {
-                  window.console.log('saved');
-                  vis(false);
-                }}
-                onCancel={() => vis(false)}
-              >
-                modal read
-                {JSON.stringify(record)}
-                <hr />
-                end
-              </Modal>
-
             </div>
 
           </Space>
         );
       };
-
-      changeColumn([tmp] as any[]);
+      changeColumn([{ ...tmp, render, filters: filter }] as any[]);
     } else {
-      changeColumn([...columns1]);
+      changeColumn([{ ...tmp, filters: filter }] as any[]);
     }
-  }, [isMentor]);
+  }, [isMentor, filter]);
 
   return (
     <div>
@@ -315,6 +254,7 @@ const ListSchedule: React.FC<ListProps> = (props: ListProps) => {
 const mapSateToProps = (state: any) => ({
   load: state.data.loading,
   base: state.data.dataBase,
+  filter: state.data.filterTypes,
 });
 
 export default connect(mapSateToProps)(ListSchedule);

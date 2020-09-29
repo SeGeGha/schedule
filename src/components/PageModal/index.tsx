@@ -7,34 +7,39 @@ import React, { useEffect, useState } from 'react';
 // import moment from 'moment';
 import {
   // Input,
-  Modal,
+  Modal, Tag,
 } from 'antd';
 import InputField from '../InputField';
+import store from '../../store';
+import { taskPage } from '../../store/modalReducer';
+import DateField from '../DateField';
+import { formDate, parsingStr } from '../../utils';
+import TypeField from '../TypeField';
+import { defaultType } from '../../constants';
 import { ObjData } from '../../models';
 
 type PageModalProps = {
   isVisible: boolean,
-  toggleModal: any,
   accessFn: any,
-  defaultData: any,
+  defaultData: ObjData|undefined,
   isEdit: boolean,
 };
 
-const PageModal: React.FC<PageModalProps> = (props: PageModalProps) => {
+const PageModal1: React.FC<PageModalProps> = (props: PageModalProps) => {
   const {
     isVisible,
-    toggleModal,
     accessFn,
     defaultData,
     isEdit,
   } = props;
-  const [state, changes] = useState(defaultData as ObjData);
-  // const [isClean, clean] = useState(isVisible);
+  const [state, changes] = useState(defaultData);
+  const [typeObj, changeType] = useState(parsingStr(defaultData && defaultData.type, defaultType) as ObjData);
+
   useEffect(() => {
-    // clean(false);
     changes(defaultData);
-    // window.console.log('page modal change', state.name);
+    changeType(parsingStr(defaultData && defaultData.type, defaultType) as ObjData);
   }, [defaultData]);
+
   return (
     <>
       <Modal
@@ -47,47 +52,71 @@ const PageModal: React.FC<PageModalProps> = (props: PageModalProps) => {
           if (isEdit) {
             accessFn(state);
           }
-          toggleModal(false);
+          store.dispatch(taskPage(undefined));
         }}
         onCancel={() => {
-          toggleModal(false);
+          store.dispatch(taskPage(undefined));
         }}
       >
-        {
-          JSON.stringify(defaultData)
-        }
-        <hr />
-        {isEdit ? 'Edit' : 'Read'}
-        <hr />
-        Name:
-        {
-        isEdit
-          ? (
+        {state && (
+          <>
+            {JSON.stringify(defaultData)}
+            <hr />
+            {isEdit ? 'Edit' : 'Read'}
+            <hr />
+            <h3>
+              Date &amp; Time:
+            </h3>
+            {
+            isEdit
+              ? (
+                <DateField
+                  record={state}
+                  accessFn={(newRecord: ObjData) => {
+                    changes(newRecord);
+                  }}
+                />
+              )
+              : formDate(state.dateTime, state.timeZone)
+            }
+            <hr />
+            Type:
+            {isEdit
+              ? (
+                <TypeField
+                  record={state}
+                  accessFn={(newRecord: ObjData) => {
+                    changes(newRecord);
+                  }}
+                />
+              )
+              : (
+                <Tag color={typeObj.color}>
+                  {typeObj.name}
+                </Tag>
+              )}
+            <hr />
+            Name:
             <InputField
+              canEdit={isEdit}
               defaultValue={state.name}
-              enterFn={(value: any) => {
+              accessFn={(value: any) => {
                 changes({ ...state, name: value });
               }}
             />
-          )
-          : state.name
-        }
-        Description:
-        {
-        isEdit
-          ? (
+            Description:
             <InputField
+              canEdit={isEdit}
               defaultValue={state.description}
-              enterFn={(value: any) => {
+              accessFn={(value: any) => {
                 changes({ ...state, description: value });
               }}
             />
-          )
-          : state.description
-        }
+          </>
+        )}
       </Modal>
     </>
   );
 };
 
-export default PageModal;
+export default PageModal1;

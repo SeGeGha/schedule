@@ -11,11 +11,9 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Button,
-  // Modal,
   Input,
   Table,
   Tag,
-  // Typography,
 } from 'antd';
 import { FormOutlined, FileTextOutlined } from '@ant-design/icons';
 import MainMenu from '../MainMenu';
@@ -23,18 +21,15 @@ import store from '../../store';
 import { ObjData } from '../../models';
 import { changeOneDataAsync } from '../../store/dataReducer';
 import {
-  // createFilterTypes,
-  // createUniqTypesObj,
   formDate,
   parsingStr,
-  // uniqStr,
 } from '../../utils';
-import DateModal from '../DateModal';
 import { defaultType } from '../../constants';
-import TypeModal from '../TypeModal';
-import PageModal from '../PageModal';
+// import TypeModal from '../TypeModal';
 import InputField from '../InputField';
-// const { Text } = Typography;
+import { taskPage } from '../../store/modalReducer';
+import DateField from '../DateField';
+import TypeField from '../TypeField';
 
 const columns1 = [
   {
@@ -42,14 +37,13 @@ const columns1 = [
     dataIndex: 'dateTime',
     fixed: 'left',
     editable: true,
-    render: (text:string, record: any) => formDate(text, record.timeZone),
+    render: (text: string, record: any) => formDate(text, record.timeZone),
   },
   {
     title: 'Type',
     dataIndex: 'type',
     editable: true,
     render: (type: string) => {
-      // const obj = type && JSON.parse(type);
       const obj = parsingStr(type, defaultType, null);
       return obj && (
         <Tag color={obj.color}>
@@ -119,35 +113,16 @@ const columns1 = [
     title: 'Action',
     dataIndex: 'action',
     editable: true,
-    render: (text: unknown, record: any) => {
-      // const aa = 'tt';
-      // const [vv, vis] = useState(false);
-      const [isVisiblePage, togglePageModal] = useState(false);
-      const isEdit = false;
-      return (
-        <>
-          <Button
-            icon={<FileTextOutlined />}
-            onClick={() => {
-              window.console.log(record);
-              // vis(true);
-              togglePageModal(true);
-            }}
-          >
-            Page
-          </Button>
-
-          <PageModal
-            isVisible={isVisiblePage}
-            isEdit={isEdit}
-            toggleModal={togglePageModal}
-            defaultData={record}
-            accessFn={() => {}}
-            // accessFn={(newRecord: any) => store.dispatch(changeOneDataAsync({ ...newRecord }))}
-          />
-        </>
-      );
-    },
+    render: (text: unknown, record: any) => (
+      <Button
+        icon={<FileTextOutlined />}
+        onClick={() => {
+          store.dispatch(taskPage(record));
+        }}
+      >
+        Page
+      </Button>
+    ),
   },
 ];
 
@@ -173,7 +148,6 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
   }, [filter, columns]);
 
   useEffect(() => {
-    // window.console.log(Date.now());
     if (isMentor) {
       const tmp = columns1.map((item) => {
         if (item.editable) {
@@ -181,52 +155,29 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
             case 'dateTime':
               return {
                 ...item,
-                render: (text: string, record: any) => {
-                  const currentDate = formDate(text, record.timeZone);
-                  const [isVisible, toggleModal] = useState(false);
-                  return (
-                    <>
-                      <a
-                        href="#"
-                        onClick={() => {
-                          toggleModal(true);
-                        }}
-                      >
-                        {currentDate}
-                      </a>
-                      <DateModal
-                        isVisible={isVisible}
-                        toggleModal={toggleModal}
-                        defaultData={record}
-                        accessFn={(obj: any) => store.dispatch(changeOneDataAsync({ ...record, ...obj }))}
-                      />
-                    </>
-                  );
-                },
+                render: (text: string, record: any) => (
+                  <>
+                    <DateField
+                      record={record}
+                      accessFn={(newRecord: ObjData) => {
+                        store.dispatch(changeOneDataAsync(newRecord));
+                      }}
+                    />
+                  </>
+                ),
               };
             case 'type':
               return {
                 ...item,
                 render: (type: string, record: any) => {
-                  const [isVisibleType, toggleModalType] = useState(false);
                   const obj = parsingStr(type, defaultType);
                   return obj && (
                     <>
-                      <Tag
-                        color={obj.color}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          window.console.log('type', record.type);
-                          toggleModalType(true);
+                      <TypeField
+                        record={record}
+                        accessFn={(newRecord: ObjData) => {
+                          store.dispatch(changeOneDataAsync(newRecord));
                         }}
-                      >
-                        {obj.name}
-                      </Tag>
-                      <TypeModal
-                        isVisible={isVisibleType}
-                        toggleModal={toggleModalType}
-                        defaultData={record}
-                        accessFn={(success: any) => store.dispatch(changeOneDataAsync({ ...record, ...success }))}
                       />
                     </>
                   );
@@ -271,84 +222,36 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
             case 'action':
               return {
                 ...item,
-                render: (text: unknown, record: any) => {
-                  const [isVisiblePage, togglePageModal] = useState(false);
-                  const isEdit = true;
-                  // const aa = 'tt';
-                  // const [vv, vis] = useState(false);
-                  return (
-                    <>
-                      <Button
-                        icon={<FormOutlined />}
-                        onClick={() => {
-                          window.console.log('start edit', record.name);
-                          togglePageModal(true);
-                          // vis(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
-
-                      <PageModal
-                        isVisible={isVisiblePage}
-                        isEdit={isEdit}
-                        toggleModal={togglePageModal}
-                        defaultData={record}
-                        accessFn={(newRecord: any) => store.dispatch(changeOneDataAsync({ ...newRecord }))}
-                      />
-                    </>
-                  );
-                },
+                render: (text: unknown, record: any) => (
+                  <Button
+                    icon={<FormOutlined />}
+                    onClick={() => {
+                      store.dispatch(taskPage(record));
+                    }}
+                  >
+                    Edit
+                  </Button>
+                ),
               };
             default:
               return {
                 ...item,
                 render: (text: string, record: any) => {
                   // const [newRecord, editText] = useState(record);
-                  const [isEdit, toggleEdit] = useState(false);
+                  // const [isEdit, toggleEdit] = useState(false);
                   // const field = useRef(null);
-                  useEffect(() => {
-                    window.console.log('new record', item.dataIndex, record[item.dataIndex]);
-                  });
+                  const isEdit = true;
                   return (
                     <>
-                      {
-                      !isEdit
-                        ? (
-                          <div
-                            onClick={() => {
-                              toggleEdit(true);
-                            }}
-                            style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
-                          >
-                            {record[item.dataIndex]}
-                          </div>
-                        )
-                        : (
-                          <InputField
-                            defaultValue={text}
-                            enterFn={(value: any) => {
-                              const newRecord = { ...record, [item.dataIndex]: value };
-                              store.dispatch(changeOneDataAsync(newRecord));
-                              toggleEdit(false);
-                            }}
-                          />
-                        )
-                      }
-
-                      {/* <Input
-                        ref={field}
-                        size="small"
-                        value={newRecord[item.dataIndex]}
-                        defaultValue={record[item.dataIndex]}
-                        onChange={(e) => editText({ ...newRecord, [item.dataIndex]: e.target.value })}
-                        onChange={(e) => editText({ ...newRecord, [item.dataIndex]: e.target.value })}
-                        onPressEnter={() => {
-                          const newRecord = { ...record, [item.dataIndex]: field };
+                      <InputField
+                        canEdit={isEdit}
+                        defaultValue={text}
+                        accessFn={(value: any) => {
+                          const newRecord = { ...record, [item.dataIndex]: value };
                           store.dispatch(changeOneDataAsync(newRecord));
-                          window.console.log('enter record', item.dataIndex, field.current && field.current.state.value);
+                          // toggleEdit(false);
                         }}
-                      /> */}
+                      />
                     </>
                   );
                 },
@@ -361,9 +264,7 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
     } else {
       changeColumn([...columns1]);
     }
-    window.console.log('effect column ');
   }, [isMentor, base]);
-  // const columns = { ...columns1 };
 
   return (
     <div>
