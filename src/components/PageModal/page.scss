@@ -1,0 +1,19 @@
+@import '../../styles/mixin.scss';
+
+.flex {
+  display: flex;
+  .expand {
+    flex-grow: 1;
+  }
+
+  .no-expand  {
+    flex-shrink: 0; 
+    flex-grow: 0;
+  }
+}
+
+.comment {
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #999
+}

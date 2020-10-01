@@ -1,18 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { useEffect, useState } from 'react';
-// import React from 'react';
 import { Input } from 'antd';
 
 type InputProps = {
-  defaultValue: any,
-  enterFn: any,
+  defaultValue:string,
+  accessFn: (obj: string) => void,
+  canEdit: boolean,
 };
 
 const InputField: React.FC<InputProps> = (props: InputProps) => {
-  const { defaultValue, enterFn } = props;
+  const { defaultValue, accessFn, canEdit } = props;
   const [val, changeVal] = useState(defaultValue);
+  const [isEdit, toggleEdit] = useState(false);
 
   useEffect(() => {
     changeVal(defaultValue);
@@ -20,21 +18,38 @@ const InputField: React.FC<InputProps> = (props: InputProps) => {
 
   return (
     <>
-      <Input
-        size="small"
-        value={val}
-        onChange={(e) => changeVal(e.target.value)}
-        onPressEnter={() => {
-          if (val !== defaultValue) {
-            enterFn(val);
-          }
-        }}
-        onBlur={() => {
-          if (val !== defaultValue) {
-            enterFn(val);
-          }
-        }}
-      />
+      {(canEdit && isEdit)
+        ? (
+          <Input
+            className="expand"
+            size="small"
+            value={val}
+            onChange={(e) => changeVal(e.target.value)}
+            onPressEnter={() => {
+              if (val !== defaultValue) {
+                accessFn(val);
+              }
+              toggleEdit(false);
+            }}
+            onBlur={() => {
+              if (val !== defaultValue) {
+                accessFn(val);
+              }
+              toggleEdit(false);
+            }}
+          />
+        )
+        : (
+          <div
+            aria-hidden="true"
+            className={canEdit ? 'field field-text ellipsis expand' : 'expand'}
+            onClick={() => {
+              toggleEdit(canEdit && true);
+            }}
+          >
+            {val || '-'}
+          </div>
+        )}
     </>
   );
 };

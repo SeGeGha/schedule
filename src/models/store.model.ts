@@ -7,3 +7,12 @@ export type ObjState = {
   loading: boolean,
   errorReq: boolean,
 };
+
+export type ModalState = {
+  pageRecord: ObjData,
+};
+
+export type AllStore = {
+  data: ObjState,
+  modal: ModalState,
+};

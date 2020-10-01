@@ -48,9 +48,9 @@ const TypeModal: React.FC<DateModalProps> = (props: DateModalProps) => {
         toggleModal(false);
       }}
     >
-      <h4>
+      <h3>
         Select type:
-      </h4>
+      </h3>
       <hr />
       <Select
         style={{ width: 200 }}
@@ -70,10 +70,10 @@ const TypeModal: React.FC<DateModalProps> = (props: DateModalProps) => {
           </Option>
         ))}
       </Select>
-      <h4>
+      <h3>
         Custom type:
-      </h4>
-      Name:
+      </h3>
+      Change name:
       <hr />
       <Input
         value={state.name}
@@ -86,10 +86,11 @@ const TypeModal: React.FC<DateModalProps> = (props: DateModalProps) => {
         Select color:
         <input
           type="color"
-          onChange={(e) => window.console.log(e.target.value)}
+          onChange={(e) => changes({ ...state, color: e.target.value })}
         />
       </Space>
       <hr />
+      Change color:
       <Input
         value={state.color}
         onChange={(e) => changes({ ...state, color: e.target.value })}

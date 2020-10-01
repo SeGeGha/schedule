@@ -52,8 +52,8 @@ const MainMenu: React.FC<MyProps> = (props: MyProps) => {
   const [isMenu, toggleMenu] = useState(false);
   // const [top, setTop] = useState(10);
   return (
-    <Affix offsetTop={10}>
-      <Space>
+    <Affix offsetTop={5}>
+      <Space style={{ marginBottom: 8 }}>
         <Button
           icon={isMenu ? <CloseOutlined /> : <MenuOutlined />}
           onClick={() => toggleMenu(!isMenu)}
@@ -82,11 +82,10 @@ const MainMenu: React.FC<MyProps> = (props: MyProps) => {
                     description: 'descr hhgdfhiooiuf ffgjklgkg ffee hgfrdfghj  hgffiiuyrfhj',
                     descriptionUrl: '["https://google.com","https://mail.google.com"]',
                     type: '{"name":"js task","color":"#5555ff"}',
-                    // type: 'gh',
                     dateTime: '2020-11-03 20:00',
                     timeZone: '+2',
-                    place: '{"name":"Minsk","lat":20,"lon":50}',
-                    comment: '[{"message":"Comment","mane":"Anna"}]',
+                    place: '{"name":"Minsk","address":"Kozlova st., 52","coord":"20,50"}',
+                    comment: '[{"message":"Comment about task","name":"Anna"}]',
                     organizer: '2',
                   }))}
                 >
