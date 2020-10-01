@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { useEffect, useState } from 'react';
-// import React from 'react';
 import { Input } from 'antd';
 
 type InputProps = {
-  defaultValue: any,
-  accessFn: any,
+  defaultValue:string,
+  accessFn: (obj: string) => void,
   canEdit: boolean,
 };
 
@@ -25,6 +21,7 @@ const InputField: React.FC<InputProps> = (props: InputProps) => {
       {(canEdit && isEdit)
         ? (
           <Input
+            className="expand"
             size="small"
             value={val}
             onChange={(e) => changeVal(e.target.value)}
@@ -45,7 +42,7 @@ const InputField: React.FC<InputProps> = (props: InputProps) => {
         : (
           <div
             aria-hidden="true"
-            className={canEdit ? 'field field-text' : ''}
+            className={canEdit ? 'field field-text ellipsis expand' : 'expand'}
             onClick={() => {
               toggleEdit(canEdit && true);
             }}

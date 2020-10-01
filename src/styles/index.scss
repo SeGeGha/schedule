@@ -13,6 +13,20 @@ body {
   cursor: default;
 }
 
+h3,h4 {
+  color: #1890ff;
+}
+
+h3 {
+  font-weight: 700;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .field {
   &:hover {
     cursor: pointer;
@@ -27,6 +41,7 @@ body {
       color: blue;
     }
   }
+
 
   &-tag:hover {
     box-shadow: 0 0 5px 2px blue;

@@ -6,12 +6,14 @@ import { defaultType } from '../../constants';
 import { ObjData } from '../../models';
 
 type TypeFieldProps = {
+  canEdit: boolean,
   record: ObjData,
   accessFn: (obj: ObjData) => void,
 };
 const TypeField: React.FC<TypeFieldProps> = (props: TypeFieldProps) => {
   const {
     record,
+    canEdit,
     accessFn,
   } = props;
 
@@ -27,10 +29,12 @@ const TypeField: React.FC<TypeFieldProps> = (props: TypeFieldProps) => {
 
     <>
       <Tag
-        className="field field-tag"
+        className={canEdit ? 'field field-tag' : ''}
         color={currentObjType.color}
         onClick={() => {
-          toggleModal(true);
+          if (canEdit) {
+            toggleModal(true);
+          }
         }}
       >
         {currentObjType.name}

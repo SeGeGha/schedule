@@ -43,9 +43,7 @@ const Main: React.FC<MainProps> = (props) => {
         isEdit={isMentor}
         defaultData={record}
         accessFn={(newRecord: ObjData) => {
-          if (isMentor) {
-            store.dispatch(changeOneDataAsync({ ...newRecord }));
-          }
+          store.dispatch(changeOneDataAsync({ ...newRecord }));
         }}
       />
     </main>

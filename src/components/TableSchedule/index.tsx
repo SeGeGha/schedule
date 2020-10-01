@@ -11,9 +11,9 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Button,
-  Input,
+  // Input,
   Table,
-  Tag,
+  // Tag,
 } from 'antd';
 import { FormOutlined, FileTextOutlined } from '@ant-design/icons';
 import MainMenu from '../MainMenu';
@@ -21,7 +21,6 @@ import store from '../../store';
 import { ObjData } from '../../models';
 import { changeOneDataAsync } from '../../store/dataReducer';
 import {
-  formDate,
   parsingStr,
 } from '../../utils';
 import { defaultType } from '../../constants';
@@ -33,96 +32,13 @@ import TypeField from '../TypeField';
 
 const columns1 = [
   {
-    title: 'Date & Time',
-    dataIndex: 'dateTime',
-    fixed: 'left',
-    editable: true,
-    render: (text: string, record: any) => formDate(text, record.timeZone),
-  },
-  {
     title: 'Type',
     dataIndex: 'type',
-    editable: true,
-    render: (type: string) => {
-      const obj = parsingStr(type, defaultType, null);
-      return obj && (
-        <Tag color={obj.color}>
-          {obj.name}
-        </Tag>
-      );
-    },
     filters: [
       { text: 'codewars', value: 'codewars' },
       { text: 'js task', value: 'js task' },
     ] as ObjData[],
     onFilter: (value: string, record: ObjData) => (record.type.indexOf(value) >= 0),
-  },
-  {
-    title: 'name',
-    dataIndex: 'name',
-    editable: true,
-  },
-  {
-    title: 'Description',
-    dataIndex: 'description',
-    editable: true,
-    ellipsis: true,
-  },
-  {
-    title: 'Url',
-    dataIndex: 'descriptionUrl',
-    editable: true,
-    render: (text: string) => {
-      if (!text) {
-        return null;
-      }
-      let link;
-      try {
-        const [link1] = JSON.parse(text);
-        link = link1;
-      } catch (e) {
-        link = text;
-      }
-      return (
-        <div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-          <a href={link} target="_blank" rel="noreferrer">
-            {link}
-          </a>
-        </div>
-      );
-    },
-  },
-  {
-    title: 'Comment',
-    dataIndex: 'comment',
-    render: (comment: string): string => {
-      if (comment) {
-        const jsonComm = JSON.parse(comment).length;
-        if (jsonComm) {
-          return String(jsonComm);
-        }
-      }
-      return '';
-    },
-  },
-  {
-    title: 'Organizer',
-    dataIndex: 'organizer',
-  },
-  {
-    title: 'Action',
-    dataIndex: 'action',
-    editable: true,
-    render: (text: unknown, record: any) => (
-      <Button
-        icon={<FileTextOutlined />}
-        onClick={() => {
-          store.dispatch(taskPage(record));
-        }}
-      >
-        Page
-      </Button>
-    ),
   },
 ];
 
@@ -142,140 +58,160 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
   } = props;
   const [selectedRowKeys, changeSel] = useState([] as ObjData[]);
   const [columns, changeColumn] = useState(columns1);
+
   useEffect(() => {
     const index = columns.findIndex((item) => item.dataIndex === 'type');
     columns[index].filters = filter;
   }, [filter, columns]);
 
   useEffect(() => {
-    if (isMentor) {
-      const tmp = columns1.map((item) => {
-        if (item.editable) {
-          switch (item.dataIndex) {
-            case 'dateTime':
-              return {
-                ...item,
-                render: (text: string, record: any) => (
-                  <>
-                    <DateField
-                      record={record}
-                      accessFn={(newRecord: ObjData) => {
-                        store.dispatch(changeOneDataAsync(newRecord));
-                      }}
-                    />
-                  </>
-                ),
-              };
-            case 'type':
-              return {
-                ...item,
-                render: (type: string, record: any) => {
-                  const obj = parsingStr(type, defaultType);
-                  return obj && (
-                    <>
-                      <TypeField
-                        record={record}
-                        accessFn={(newRecord: ObjData) => {
-                          store.dispatch(changeOneDataAsync(newRecord));
-                        }}
-                      />
-                    </>
-                  );
-                },
-              };
-            case 'descriptionUrl':
-              return {
-                ...item,
-                render: (text: string, record: any) => {
-                  let parseJson: string[];
-                  let link;
-                  let isParsed = true;
-                  try {
-                    parseJson = JSON.parse(text);
-                    const [link1] = parseJson;
-                    link = link1;
-                  } catch (e) {
-                    link = '';
-                    isParsed = false;
-                  }
-                  const [newText, editText] = useState(link);
-                  return (
-                    <>
-                      <Input
-                        size="small"
-                        value={newText}
-                        onChange={(e) => editText(e.target.value)}
-                        onPressEnter={() => {
-                          if (isParsed) {
-                            parseJson[0] = newText;
-                          } else {
-                            parseJson = [newText];
-                          }
-                          const newRecord = { ...record, [item.dataIndex]: JSON.stringify(parseJson) };
-                          store.dispatch(changeOneDataAsync(newRecord));
-                        }}
-                      />
-                    </>
-                  );
-                },
-              };
-            case 'action':
-              return {
-                ...item,
-                render: (text: unknown, record: any) => (
-                  <Button
-                    icon={<FormOutlined />}
-                    onClick={() => {
-                      store.dispatch(taskPage(record));
-                    }}
-                  >
-                    Edit
-                  </Button>
-                ),
-              };
-            default:
-              return {
-                ...item,
-                render: (text: string, record: any) => {
-                  // const [newRecord, editText] = useState(record);
-                  // const [isEdit, toggleEdit] = useState(false);
-                  // const field = useRef(null);
-                  const isEdit = true;
-                  return (
-                    <>
-                      <InputField
-                        canEdit={isEdit}
-                        defaultValue={text}
-                        accessFn={(value: any) => {
-                          const newRecord = { ...record, [item.dataIndex]: value };
-                          store.dispatch(changeOneDataAsync(newRecord));
-                          // toggleEdit(false);
-                        }}
-                      />
-                    </>
-                  );
-                },
-              };
+    const tmp = [
+      {
+        title: 'Date & Time',
+        dataIndex: 'dateTime',
+        fixed: 'left',
+        render: (text: string, record: any) => (
+          <>
+            <DateField
+              canEdit={isMentor}
+              record={record}
+              accessFn={(newRecord: ObjData) => {
+                store.dispatch(changeOneDataAsync(newRecord));
+              }}
+            />
+          </>
+        ),
+      },
+      {
+        title: 'Type',
+        dataIndex: 'type',
+        render: (type: string, record: any) => {
+          const obj = parsingStr(type, defaultType);
+          return obj && (
+            <>
+              <TypeField
+                record={record}
+                canEdit={isMentor}
+                accessFn={(newRecord: ObjData) => {
+                  store.dispatch(changeOneDataAsync(newRecord));
+                }}
+              />
+            </>
+          );
+        },
+        filters: [
+          { text: 'codewars', value: 'codewars' },
+          { text: 'js task', value: 'js task' },
+        ] as ObjData[],
+        onFilter: (value: string, record: ObjData) => (record.type.indexOf(value) >= 0),
+      },
+      {
+        title: 'name',
+        dataIndex: 'name',
+        render: (text: string, record: any) => (
+          <>
+            <InputField
+              canEdit={isMentor}
+              defaultValue={text}
+              accessFn={(value: any) => {
+                const newRecord = { ...record, name: value };
+                store.dispatch(changeOneDataAsync(newRecord));
+              }}
+            />
+          </>
+        ),
+      },
+      {
+        title: 'Description',
+        dataIndex: 'description',
+        ellipsis: true,
+        render: (text: string, record: any) => (
+          <>
+            <InputField
+              canEdit={isMentor}
+              defaultValue={text}
+              accessFn={(value: any) => {
+                const newRecord = { ...record, description: value };
+                store.dispatch(changeOneDataAsync(newRecord));
+              }}
+            />
+          </>
+        ),
+      },
+      {
+        title: 'Url',
+        dataIndex: 'descriptionUrl',
+        ellipsis: true,
+        render: (text: string, record: any) => {
+          const parseUrl = parsingStr(text, [] as string[]);
+          return parseUrl && (
+            isMentor
+              ? (
+                <InputField
+                  defaultValue={parseUrl[0] || ''}
+                  canEdit={isMentor}
+                  accessFn={(newValue) => {
+                    parseUrl[0] = newValue;
+                    const newRecord = { ...record, descriptionUrl: JSON.stringify(parseUrl) };
+                    store.dispatch(changeOneDataAsync(newRecord));
+                  }}
+                />
+              )
+              : !!parseUrl.length && (
+                <a href={parseUrl[0]} target="_blank" rel="noreferrer">
+                  {parseUrl[0]}
+                </a>
+              )
+          );
+        },
+      },
+      {
+        title: 'Place',
+        dataIndex: 'place',
+        render: (place: string) => {
+          const placeObj = parsingStr(place, {} as ObjData);
+          window.console.log(placeObj);
+          return (placeObj && placeObj.name) ? placeObj.name : 'Online';
+        },
+      },
+      {
+        title: 'Organizer',
+        dataIndex: 'organizer',
+      },
+      {
+        title: 'Comment',
+        dataIndex: 'comment',
+        render: (comment: string): string => {
+          if (comment) {
+            const jsonComm = JSON.parse(comment).length;
+            if (jsonComm) {
+              return String(jsonComm);
+            }
           }
-        }
-        return item;
-      });
-      changeColumn([...tmp] as any[]);
-    } else {
-      changeColumn([...columns1]);
-    }
+          return '';
+        },
+      },
+      {
+        title: 'Action',
+        dataIndex: 'action',
+        editable: true,
+        render: (text: unknown, record: any) => (
+          <Button
+            icon={!isMentor ? (<FileTextOutlined />) : (<FormOutlined />)}
+            onClick={() => {
+              store.dispatch(taskPage(record));
+            }}
+          >
+            {isMentor ? 'Edit' : 'Page'}
+          </Button>
+        ),
+      },
+    ];
+    changeColumn([...tmp] as any[]);
   }, [isMentor, base]);
 
   return (
     <div>
-      base
-      <hr />
-      {JSON.stringify(base.map((t: ObjData) => `${t.id} `))}
-      <hr />
-      Table
-      {isMentor ? 'mentor' : 'student'}
-      selected
-      <hr />
       {JSON.stringify(selectedRowKeys.map((t: ObjData) => t.id))}
       <MainMenu
         rows={selectedRowKeys}
@@ -295,12 +231,11 @@ const TableSchedule: React.FC<TableProps> = (props: TableProps) => {
           ],
           onChange: (a1, a2) => {
             changeSel(a2 as ObjData[]);
-            window.console.log('onChange: list keys=', a1, 'list objects=', a2);
+            // window.console.log('onChange: list keys=', a1, 'list objects=', a2);
           },
         }}
       />
     </div>
-
   );
 };
 

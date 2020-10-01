@@ -5,11 +5,13 @@ import { ObjData } from '../../models';
 
 type DateFieldProps = {
   record: ObjData,
+  canEdit: boolean,
   accessFn: (obj: ObjData) => void,
 };
 const DateField: React.FC<DateFieldProps> = (props: DateFieldProps) => {
   const {
     record,
+    canEdit,
     accessFn,
   } = props;
   const defaultDate = formDate(record.dateTime, record.timeZone);
@@ -22,9 +24,13 @@ const DateField: React.FC<DateFieldProps> = (props: DateFieldProps) => {
   return (
     <>
       <span
-        className="field field-text"
+        className={canEdit ? 'field field-text' : ''}
         aria-hidden="true"
-        onClick={() => toggleModal(true)}
+        onClick={() => {
+          if (canEdit) {
+            toggleModal(true);
+          }
+        }}
       >
         {currentDate}
       </span>

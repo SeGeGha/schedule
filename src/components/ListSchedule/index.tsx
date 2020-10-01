@@ -8,26 +8,24 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Button,
-  Input,
   Space,
   Table,
-  Tag,
+  // Tag,
 } from 'antd';
-import { FileTextOutlined } from '@ant-design/icons';
-import MainMenu from '../MainMenu';
+import { FileTextOutlined, FormOutlined } from '@ant-design/icons';
 import {
-  formDate,
+  // formDate,
   parsingStr,
 } from '../../utils';
 import { defaultType } from '../../constants';
-// import DateModal from '../DateModal';
 import store from '../../store';
 import { changeOneDataAsync } from '../../store/dataReducer';
-// import TypeModal from '../TypeModal';
 import { taskPage } from '../../store/modalReducer';
-import { ObjData } from '../../models';
 import DateField from '../DateField';
 import TypeField from '../TypeField';
+import InputField from '../InputField';
+import MainMenu from '../MainMenu';
+import { ObjData } from '../../models';
 
 type ListProps = {
   load: boolean,
@@ -38,72 +36,11 @@ type ListProps = {
 
 const columns1 = [
   {
-    // title: '',
     dataIndex: 'main',
     filters: [
-      { text: 'codewars', value: 'codewars' },
       { text: 'js task', value: 'js task' },
     ] as ObjData[],
     onFilter: (value: string, record: ObjData) => (record.type.indexOf(value) >= 0),
-    render: (text: unknown, record: ObjData) => {
-      const parseType = parsingStr(record.type, defaultType, null);
-      const parseUrl = parsingStr(record.descriptionUrl, [] as string[]);
-      const parseComment = parsingStr(record.comment, []);
-
-      return (
-        <Space direction="vertical" size="small">
-          <div>
-            Date &amp; Time:
-            {formDate(record.dateTime, record.timeZone)}
-          </div>
-          <div>
-            Type:
-            {parseType && (
-              <Tag color={parseType.color}>
-                {parseType.name}
-              </Tag>
-            )}
-          </div>
-          <div>
-            Name:
-            {record.name}
-          </div>
-          <div>
-            Description:
-            {record.description}
-          </div>
-          <div>
-            Url:
-            <hr />
-            {parseUrl && parseUrl.map((item) => (
-              <div key={item}>
-                <a href={item} target="_blank" rel="noreferrer">
-                  {item}
-                </a>
-              </div>
-            ))}
-          </div>
-          <div>
-            Count comments:
-            {parseComment && parseComment.length}
-          </div>
-          <div>
-            Organizer:
-            {record.organizer}
-          </div>
-          <div>
-            <Button
-              icon={<FileTextOutlined />}
-              onClick={() => {
-                store.dispatch(taskPage(record));
-              }}
-            >
-              Page
-            </Button>
-          </div>
-        </Space>
-      );
-    },
   },
 ];
 
@@ -119,108 +56,138 @@ const ListSchedule: React.FC<ListProps> = (props: ListProps) => {
 
   useEffect(() => {
     const [tmp] = columns1;
-    if (isMentor) {
-      const render = (text: unknown, record: ObjData) => {
-        const parseType = parsingStr(record.type, defaultType);
-        const parseUrl = parsingStr(record.descriptionUrl, [''], ['']);
-        const parseComment = parsingStr(record.comment, []);
+    // if (isMentor) {
+    const render = (text: unknown, record: ObjData) => {
+      const parseType = parsingStr(record.type, defaultType);
+      const parseUrl = parsingStr(record.descriptionUrl, [] as string[]);
+      const parseComment = parsingStr(record.comment, [] as ObjData[]);
+      const parsePlace = parsingStr(record.place, {} as ObjData);
 
-        const [newName, editName] = useState(record.name);
-        const [newDescr, editDescr] = useState(record.description);
+      // const [newName, editName] = useState(record.name);
+      // const [newDescr, editDescr] = useState(record.description);
 
-        return (
-          <Space direction="vertical" size="small">
-            <div>
+      return (
+        <Space direction="vertical" size="small">
+          <div>
+            <h3>
               Date &amp; Time:
-              <DateField
+            </h3>
+            <DateField
+              record={record}
+              canEdit={isMentor}
+              accessFn={(newRecord: ObjData) => {
+                store.dispatch(changeOneDataAsync(newRecord));
+              }}
+            />
+          </div>
+          <div>
+            <h3>
+              Type:
+            </h3>
+            {parseType && (
+              <TypeField
+                canEdit={isMentor}
                 record={record}
                 accessFn={(newRecord: ObjData) => {
                   store.dispatch(changeOneDataAsync(newRecord));
                 }}
               />
-            </div>
-            <div>
-              Type:
-              {parseType && (
-                <TypeField
-                  record={record}
-                  accessFn={(newRecord: ObjData) => {
-                    store.dispatch(changeOneDataAsync(newRecord));
-                  }}
-                />
-              )}
-            </div>
-            <div>
+            )}
+          </div>
+          <div>
+            <h3>
               Name:
-              <Input
-                size="small"
-                value={newName}
-                onChange={(e) => editName(e.target.value)}
-                onPressEnter={() => {
-                  const newRecord = { ...record, name: newName };
-                  store.dispatch(changeOneDataAsync(newRecord));
-                }}
-              />
-            </div>
-            <div>
+            </h3>
+            <InputField
+              canEdit={isMentor}
+              defaultValue={record.name}
+              accessFn={(newValue: string) => {
+                if (isMentor) {
+                  store.dispatch(changeOneDataAsync({ ...record, name: newValue }));
+                }
+              }}
+            />
+          </div>
+          <div>
+            <h3>
               Description:
-              <Input
-                size="small"
-                value={newDescr}
-                onChange={(e) => editDescr(e.target.value)}
-                onPressEnter={() => {
-                  const newRecord = { ...record, description: newDescr };
-                  store.dispatch(changeOneDataAsync(newRecord));
-                }}
-              />
-            </div>
-            <div>
+            </h3>
+            <InputField
+              canEdit={isMentor}
+              defaultValue={record.description}
+              accessFn={(newValue: string) => {
+                if (isMentor) {
+                  store.dispatch(changeOneDataAsync({ ...record, description: newValue }));
+                }
+              }}
+            />
+          </div>
+          <div>
+            <h3>
               Url:
-              <hr />
-              {parseUrl && parseUrl.length && parseUrl.map((itemUrl, index, allList) => {
-                const [newUrl, editUrl] = useState(itemUrl);
-                return (
-                  <Input
-                    key={itemUrl}
-                    size="small"
-                    value={newUrl}
-                    onChange={(e) => editUrl(e.target.value)}
-                    onPressEnter={() => {
-                      const newAllList = [...allList];
-                      newAllList[index] = newUrl;
-                      const newRecord = { ...record, descriptionUrl: JSON.stringify(newAllList) };
-                      store.dispatch(changeOneDataAsync(newRecord));
-                    }}
-                  />
-                );
-              })}
-            </div>
-            <div>
-              Count comments:
-              {parseComment && parseComment.length}
-            </div>
-            <div>
+            </h3>
+            <hr />
+            {parseUrl && !!parseUrl.length && parseUrl.map((itemUrl, index, allList) => (
+              <div key={`${itemUrl}${String(index)}`}>
+                {isMentor
+                  ? (
+                    <InputField
+                      defaultValue={itemUrl}
+                      canEdit={isMentor}
+                      accessFn={(newValue) => {
+                        const newAllList = [...allList];
+                        newAllList[index] = newValue;
+                        const newRecord = { ...record, descriptionUrl: JSON.stringify(newAllList) };
+                        store.dispatch(changeOneDataAsync(newRecord));
+                      }}
+                    />
+                  )
+                  : (
+                    <a href={itemUrl} target="_blank" rel="noreferrer">
+                      {itemUrl}
+                    </a>
+                  )}
+              </div>
+            ))}
+          </div>
+          <div>
+            <h3>
+              Place:
+            </h3>
+            {(parsePlace && parsePlace.name) ? parsePlace.name : 'Online'}
+            {(parsePlace && parsePlace.address) && `\n${parsePlace.address}`}
+          </div>
+          <div>
+            <h3>
+              Comment:
+            </h3>
+            {parseComment && parseComment.length && `Total: ${parseComment.length}`}
+            {parseComment && parseComment.length && `\nFirst: ${parseComment[0].message}`}
+          </div>
+          <div>
+            <h3>
               Organizer:
-              {record.organizer}
-            </div>
-            <div>
-              <Button
-                icon={<FileTextOutlined />}
-                onClick={() => {
-                  store.dispatch(taskPage(record));
-                }}
-              >
-                Page
-              </Button>
-            </div>
+            </h3>
+            {record.organizer}
+          </div>
+          <div>
+            <Button
+              icon={!isMentor ? (<FileTextOutlined />) : (<FormOutlined />)}
+              onClick={() => {
+                store.dispatch(taskPage(record));
+              }}
+            >
+              {isMentor ? 'Edit' : 'Page'}
+            </Button>
+          </div>
 
-          </Space>
-        );
-      };
-      changeColumn([{ ...tmp, render, filters: filter }] as any[]);
-    } else {
-      changeColumn([{ ...tmp, filters: filter }] as any[]);
-    }
+        </Space>
+      );
+    };
+    changeColumn([{ ...tmp, render, filters: filter }] as any[]);
+    // } else {
+    //   changeColumn([{ ...tmp, filters: filter }] as any[]);
+    // }
   }, [isMentor, filter]);
 
   return (
